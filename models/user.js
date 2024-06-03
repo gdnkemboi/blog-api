@@ -5,8 +5,8 @@ const Schema = mongoose.Schema;
 
 const UserSchema = new Schema({
   username: { type: String, required: true, unique: true },
-  email: {type: String, unique: true},
-  password: { type: String, required: true, unique: true },
+  email: { type: String, unique: true },
+  password: { type: String, required: true },
   role: { type: String, enum: ["author", "user", "admin"], default: "user" },
   createdAt: { type: Date, default: Date.now() },
 });
@@ -27,4 +27,4 @@ UserSchema.methods.comparePassword = function (candidatePassword) {
   return bcrypt.compare(candidatePassword, this.password);
 };
 
-module.exports = mongoose.models("User", UserSchema);
+module.exports = mongoose.model("User", UserSchema);
