@@ -5,7 +5,7 @@ const postControllers = require("../controllers/postController");
 
 router.get("/posts", postControllers.getPosts);
 
-router.get("/posts/:postID", postControllers.getPost);
+router.get("/posts/:id", postControllers.getPost);
 
 router.post(
   "/posts",
@@ -14,13 +14,13 @@ router.post(
 );
 
 router.put(
-  "/posts/:postID",
+  "/posts/:id",
   passport.authenticate("jwt", { session: false }),
   postControllers.updatePost
 );
 
 router.delete(
-  "/posts/:postID",
+  "/posts/:id",
   passport.authenticate("jwt", { session: false }),
   postControllers.deletePost
 );
