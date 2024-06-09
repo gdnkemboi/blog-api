@@ -4,9 +4,6 @@ const asyncHandler = require("express-async-handler");
 const { body, validationResult } = require("express-validator");
 require("dotenv").config();
 const passport = require("passport");
-const LocalStrategy = require("passport-local").Strategy;
-const JwtStrategy = require("passport-jwt").Strategy;
-const ExtractJwt = require("passport-jwt").ExtractJwt;
 
 exports.getPosts = asyncHandler(async (req, res, next) => {
   const posts = await Post.find({})
@@ -18,11 +15,11 @@ exports.getPosts = asyncHandler(async (req, res, next) => {
 });
 
 exports.getPost = asyncHandler(async (req, res, next) => {
-  const post = await Post.findById(req.params.postID).populate("author").exec();
+  const post = await Post.findById(req.params.id).populate("author").exec();
 
   if (post === null) {
     // No results.
-    const err = new Error("Book not found");
+    const err = new Error("Post not found");
     err.status = 404;
     return next(err);
   }

@@ -3,24 +3,33 @@ const router = express.Router();
 const passport = require("passport");
 const commentsControllers = require("../controllers/commentController");
 
-router.get("/comments", commentsControllers.getComments);
+router.get("/posts/:postID/comments", commentsControllers.getComments);
 
-router.get("/comments/:commentID", commentsControllers.getComment);
+router.get(
+  "/posts/:postID/comments/:commentID",
+  commentsControllers.getComment
+);
 
 router.post(
-  "/comments",
+  "/posts/:postID/comments",
   passport.authenticate("jwt", { session: false }),
-  commentsControllers.createComment
+  commentsControllers.addComment
+);
+
+router.post(
+  "/posts/:postID/comments/:commentID/reply",
+  passport.authenticate("jwt", { session: false }),
+  commentsControllers.replyToComment
 );
 
 router.put(
-  "/comments/:commentID",
+  "/posts/:postID/comments/:commentID",
   passport.authenticate("jwt", { session: false }),
   commentsControllers.updateComment
 );
 
 router.delete(
-  "/comments/:commentID",
+  "/posts/:postID/comments/:commentID",
   passport.authenticate("jwt", { session: false }),
   commentsControllers.deleteComment
 );
