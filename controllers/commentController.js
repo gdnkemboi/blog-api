@@ -30,7 +30,7 @@ exports.getComments = asyncHandler(async (req, res, next) => {
   res.json({ comments: populatedComments });
 });
 
-exports.getComment = exports.getComments = asyncHandler(
+exports.getComment = asyncHandler(
   async (req, res, next) => {
     const comment = await Comment.findById(req.params.commentID).lean();
 
