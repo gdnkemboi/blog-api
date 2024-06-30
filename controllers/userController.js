@@ -15,20 +15,6 @@ exports.signUp = asyncHandler(async (req, res, next) => {
   res.json({ message: "Sign up succesful!" });
 });
 
-// exports.logIn = (req, res, next) => {
-//   passport.authenticate("local", { session: false }, (err, user, info) => {
-//     if (err) return next(err);
-//     if (!user) return res.status(400).json(info.message);
-
-//     const payload = { id: user.id };
-//     const secretKey = process.env.SECRET_KEY;
-//     console.log(secretKey);
-//     const token = jwt.sign(payload, secretKey, { expiresIn: 60 * 60 });
-
-//     return res.json({ message: "Auth passed!", token });
-//   })(req, res, next);
-// };
-
 exports.logIn = (req, res, next) => {
   passport.authenticate("local", { session: false }, (err, user, info) => {
     if (err) return next(err);
@@ -43,7 +29,7 @@ exports.logIn = (req, res, next) => {
 
     res.json({ message: "Logged in successfully", token: token });
   })(req, res, next);
-}
+};
 
 exports.logOut = (req, res, next) => {
   res.json({ message: "NOT IMPLEMENTED Log Out" });

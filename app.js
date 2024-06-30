@@ -21,6 +21,8 @@ const usersRouter = require("./routes/users");
 const postsRouter = require("./routes/posts");
 const commentsRouter = require("./routes/comments");
 
+const { swaggerUi, swaggerSpec } = require("./swagger");
+
 const app = express();
 
 app.use(logger("dev"));
@@ -53,7 +55,7 @@ const opts = {
 };
 
 passport.use(
-  new JwtStrategy(opts,async (jwt_payload, done) => {
+  new JwtStrategy(opts, async (jwt_payload, done) => {
     const user = await User.findById(jwt_payload.id);
     if (user) {
       return done(null, user);
@@ -68,15 +70,18 @@ app.use("/users", usersRouter);
 app.use("/api", postsRouter);
 app.use("/api", commentsRouter);
 
+// Swagger setup
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+
 // Catch 404 and forward to error handler
-app.use(function(req, res, next) {
-  const err = new Error('Not Found');
+app.use(function (req, res, next) {
+  const err = new Error("Not Found");
   err.status = 404;
   next(err);
 });
 
 // Error handler
-app.use(function(err, req, res, next) {
+app.use(function (err, req, res, next) {
   // Set response status code
   res.status(err.status || 500);
 
@@ -84,8 +89,8 @@ app.use(function(err, req, res, next) {
   res.json({
     error: {
       message: err.message,
-      status: err.status || 500
-    }
+      status: err.status || 500,
+    },
   });
 });
 
