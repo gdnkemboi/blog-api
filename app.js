@@ -27,14 +27,16 @@ const { swaggerUi, swaggerSpec } = require("./swagger");
 
 const app = express();
 
-app.use(compression);
+app.use(compression());
 app.use(helmet());
 
 app.use(logger("dev"));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
-app.use(express.static(path.join(__dirname, "public")));
+if (process.env.NODE_ENV === "production") {
+  app.use(express.static(path.join(__dirname, "public")));
+}
 
 passport.use(
   new LocalStrategy(async (username, password, done) => {
@@ -76,7 +78,9 @@ app.use("/api", postsRouter);
 app.use("/api", commentsRouter);
 
 // Swagger setup
-app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+if (process.env.NODE_ENV !== "production") {
+  app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+}
 
 // Catch 404 and forward to error handler
 app.use(function (req, res, next) {
