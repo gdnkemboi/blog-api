@@ -7,7 +7,7 @@ const passport = require("passport");
 
 exports.getPosts = asyncHandler(async (req, res, next) => {
   const posts = await Post.find({})
-    .populate("author")
+    .populate("author", "username")
     .sort({ createdAt: 1 })
     .exec();
 
@@ -15,7 +15,7 @@ exports.getPosts = asyncHandler(async (req, res, next) => {
 });
 
 exports.getPost = asyncHandler(async (req, res, next) => {
-  const post = await Post.findById(req.params.id).populate("author").exec();
+  const post = await Post.findById(req.params.id).populate("author", "username").exec();
 
   if (post === null) {
     // No results.

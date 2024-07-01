@@ -6,7 +6,10 @@ const { body, validationResult } = require("express-validator");
 async function populateReplies(comment) {
   const populatedComment = await Comment.populate(comment, {
     path: "replies",
-    populate: { path: "replies" },
+    populate: [
+      { path: "author", select: "username" },
+      { path: "replies", populate: { path: "author", select: "username" } },
+    ],
   });
 
   if (populatedComment.replies && populatedComment.replies.length > 0) {
@@ -22,7 +25,9 @@ exports.getComments = asyncHandler(async (req, res, next) => {
   const comments = await Comment.find({
     post: req.params.postID,
     status: "approved",
-  }).lean();
+  })
+    .populate("author", "username")
+    .lean();
 
   // Populate replies recursively
   const populatedComments = await Promise.all(comments.map(populateReplies));
@@ -30,22 +35,22 @@ exports.getComments = asyncHandler(async (req, res, next) => {
   res.json({ comments: populatedComments });
 });
 
-exports.getComment = asyncHandler(
-  async (req, res, next) => {
-    const comment = await Comment.findById(req.params.commentID).lean();
+exports.getComment = asyncHandler(async (req, res, next) => {
+  const comment = await Comment.findById(req.params.commentID)
+    .populate("author", "username")
+    .lean();
 
-    if (comment === null) {
-      // No results.
-      const err = new Error("Comment not found");
-      err.status = 404;
-      return next(err);
-    }
-    // Populate replies recursively
-    const populatedComments = await populateReplies(comment);
-
-    res.json({ comments: populatedComments });
+  if (comment === null) {
+    // No results.
+    const err = new Error("Comment not found");
+    err.status = 404;
+    return next(err);
   }
-);
+  // Populate replies recursively
+  const populatedComments = await populateReplies(comment);
+
+  res.json({ comments: populatedComments });
+});
 
 exports.addComment = [
   body("content")
