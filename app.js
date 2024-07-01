@@ -9,6 +9,8 @@ const LocalStrategy = require("passport-local").Strategy;
 const JwtStrategy = require("passport-jwt").Strategy;
 const ExtractJwt = require("passport-jwt").ExtractJwt;
 const User = require("./models/user");
+const compression = require("compression");
+const helmet = require("helmet");
 
 main().catch((err) => console.log(err));
 
@@ -24,6 +26,9 @@ const commentsRouter = require("./routes/comments");
 const { swaggerUi, swaggerSpec } = require("./swagger");
 
 const app = express();
+
+app.use(compression);
+app.use(helmet());
 
 app.use(logger("dev"));
 app.use(express.json());
